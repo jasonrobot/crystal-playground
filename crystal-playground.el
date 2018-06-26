@@ -23,7 +23,7 @@
 
 ;;; Commentary:
 
-;; It is port of github.com/grafov/rust-playground for Rust language.
+;; It is port of github.com/grafov/rust-playground for Crystal language.
 
 ;;; Code:
 
@@ -34,9 +34,37 @@
   "Options for crystal-playground."
   :group 'crystal-mode)
 
-(defcustom crystal-playground-basedir (locate-user-emacs-file "crystal-playground")
+(defcustom crystal-playground-basedir
+  (locate-user-emacs-file "crystal-playground")
   "Base directory for the crystal playground."
   :type 'file
+  :group 'crystal-playground)
+
+(defcustom crystal-playground-run-command
+  "crystal run playground.cr"
+  "Command used to run the playground."
+  :type 'string
+  :group 'crystal-playground)
+
+(defcustom crystal-playground-main-template
+  "require \"./playground/*\"
+
+module Playground
+  def self.main
+    # TODO: Put your code here
+    
+  end
+end
+
+puts \"Result: %s\" % Playground.main"
+  "When creating a new playground, this will be used as the playground.cr file"
+  :type 'string
+  :group 'crystal-playground)
+
+(defcustom crystal-playground-source-header-comment
+  ""
+  "Header comment that goes in the source file with instructions."
+  :type 'string
   :group 'crystal-playground)
 
 ;; TODO keymap
@@ -62,13 +90,13 @@ the path to the basedir or NIL if this is not a snippet."
           (if (string= (file-name-as-directory base)
                        (file-name-as-directory path-parent))
               path
-            (crystal-playground-get-snippet-basedir path-parent)))
+            (crystal-playground-get-current-basedir path-parent)))
       nil)))
-  
+
 (defmacro in-crystal-playground (&rest forms)
-  "Execute FORMS if current buffer is part of a rust playground.
+  "Execute FORMS if current buffer is part of a playground.
 Otherwise message the user that they aren't in one."
-  `(if (not (crystal-playground-get-basedir))
+  `(if (not (crystal-playground-get-current-basedir))
        (message "You aren't in a Crystal playground.")
      ,@forms))
 
@@ -107,13 +135,23 @@ Otherwise message the user that they aren't in one."
          (shard-yml (crystal-playground-get-shard-yml current-playground-dir)))
     ;; open the main file
     (find-file main-cr)
-    (crystal-playground-mode)
     ;; set all the modes we need
     (crystal-playground-mode)
-    ;; insert the template header    
-    ;; add some things to make this better as a playground
+    ;; just making my own rather than modifying what exists
+    (erase-buffer)
+    ;; insert the template header
+    (insert crystal-playground-source-header-comment)
+    (insert crystal-playground-main-template)
     ;; put the point in a nice place
-    ))
+    (forward-line -4)
+    (end-of-line)))
+
+(defun crystal-playground-exec ()
+  "Run the code of the playground."
+  (interactive)
+  (in-crystal-playground
+   (save-buffer t)
+   (compile crystal-playground-run-command)))
 
 ;;;###autoload
 (defun crystal-playground-rm ()
