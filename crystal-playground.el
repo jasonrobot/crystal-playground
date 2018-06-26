@@ -75,7 +75,6 @@ puts \"Result: %s\" % Playground.main"
   :type 'string
   :group 'crystal-playground)
 
-;; TODO keymap
 (define-minor-mode crystal-playground-mode
   "A place to play with crystal!"
   :init-value nil
@@ -83,6 +82,7 @@ puts \"Result: %s\" % Playground.main"
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "C-c C-c") 'crystal-playground-exec)
             (define-key map (kbd "C-c k") 'crystal-playground-rm)
+            ;;TODO add a key for switch to shard.yml
             map))
 
 (defun crystal-playground-get-current-basedir (&optional path)
@@ -165,6 +165,15 @@ Otherwise message the user that they aren't in one."
    (save-buffer t)
    (compile crystal-playground-run-command)))
 
+(defun crystal-playground-get-all-buffers ()
+  "Get all buffers visiting a file in the playground."
+  (let* ((basedir (crystal-playground-get-current-basedir)))
+    (remove 'nil
+            (mapcar 'find-buffer-visiting
+                    (append
+                     (directory-files-recursively basedir "\.cr$")
+                     (directory-files-recursively basedir "\.yml$"))))))
+
 ;;;###autoload
 (defun crystal-playground-rm ()
   "Remove files of the current snippet together with directory of this snippet."
@@ -175,8 +184,8 @@ Otherwise message the user that they aren't in one."
          (when (or (not crystal-playground-confirm-deletion)
                    (y-or-n-p (format "Do you want delete whole dir %s? "
                                      current-basedir)))
-           ;; (dolist (buf (crystal-playground-get-all-buffers))
-           ;;   (kill-buffer buf))
+           (dolist (buf (crystal-playground-get-all-buffers))
+             (kill-buffer buf))
            (delete-directory current-basedir t t))
        (message "Won't delete this! Because %s is not under the path %s. Remove the snippet manually!"
                 (buffer-file-name)
