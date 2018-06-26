@@ -47,8 +47,9 @@
 
 (defun crystal-playground-get-current-basedir (&optional path)
   "Get the path of the dir containing this playground.
-Start from PATH or the path of the current buffer's file. Returns the 
-path to the basedir or NIL if this is not a snippet."
+
+Start from PATH or the path of the current buffer's file.  Returns 
+the path to the basedir or NIL if this is not a snippet."
   (unless path
     (setq path (buffer-file-name)))
   ;; need this check incase buffer isn't visiting a file
@@ -77,15 +78,16 @@ Otherwise message the user that they aren't in one."
   ;; use `crystal` command to fill out the snippet
   ;; (shell-command "crystal init app playground"))
   ;;make a name from a datestamp
-  (let ((playground-name (file-name-as-directory
+  (let ((playground-dir (expand-file-name
+                         (file-name-as-directory
                           (concat
                            (file-name-as-directory basedir)
-                           (time-stamp-string "at-%:y-%02m-%02d-%02H%02M%02S")))))    
-    ;;make the dir
-    (make-directory playground-name t)
-    (call-process "crystal" "init" "app" "playground" playground-name)
+                           (time-stamp-string "at-%:y-%02m-%02d-%02H%02M%02S"))))))
+    ;; this makes its target dir automatically.
+    ;; in fact it wont work if the dir exists
+    (call-process "crystal" nil nil nil "init" "app" "playground" playground-dir)
     ;;return the dir
-    playground-name))
+    playground-dir))
 
 ;;;###autoload
 (defun crystal-playground ()
