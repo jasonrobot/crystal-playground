@@ -31,7 +31,7 @@ Example screen after creation of a new snippet:
 ### List of interactive functions
 
 | Function name                 | Description                                                          |
-|-------------------------------+----------------------------------------------------------------------|
+|-------------------------------|----------------------------------------------------------------------|
 | `crystal-playground`          | Create a new playground buffer with basic template for the package.  |
 | `crystal-playground-download` | [WIP] Download the snippet from the URL at play.crystal-lang.org.    |
 | `crystal-playground-exec`     | Save, compile and run the code of the snippet.                       |

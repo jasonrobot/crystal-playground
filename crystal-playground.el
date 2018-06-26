@@ -71,7 +71,11 @@ puts \"Result: %s\" % Playground.main"
 (define-minor-mode crystal-playground-mode
   "A place to play with crystal!"
   :init-value nil
-  :lighter "Play(Crystal)")
+  :lighter "Play(Crystal)"
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "C-c C-c") 'crystal-playground-exec)
+            (define-key map (kbd "C-c k") 'crystal-playground-rm)
+            map))
 
 (defun crystal-playground-get-current-basedir (&optional path)
   "Get the path of the dir containing this playground.
