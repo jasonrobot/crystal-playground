@@ -46,6 +46,14 @@
   :type 'string
   :group 'crystal-playground)
 
+(defcustom crystal-playground-confirm-deletion
+  t
+  "Non-nil means you will be asked for confirmation on the snippet deletion with `crystal-playground-rm'.
+
+By default confirmation required."
+  :type 'boolean
+  :group 'crystal-playground)
+
 (defcustom crystal-playground-main-template
   "require \"./playground/*\"
 
