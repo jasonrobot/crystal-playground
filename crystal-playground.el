@@ -89,6 +89,14 @@ Otherwise message the user that they aren't in one."
     ;;return the dir
     playground-dir))
 
+(defun crystal-playground-get-main-cr (basedir)
+  "Get the path to the main .cr file in the playground at BASEDIR."
+  (concat basedir (file-name-as-directory "src") "playground.cr"))
+
+(defun crystal-playground-get-shard-yml (basedir)
+  "Get the path to the main .cr file in the playground at BASEDIR."
+  (concat basedir "shard.yml"))
+
 ;;;###autoload
 (defun crystal-playground ()
   "Start a new crystal playground."
@@ -96,7 +104,7 @@ Otherwise message the user that they aren't in one."
   (let* ((current-playground-dir
           (crystal-playground-make-new crystal-playground-basedir))
          (main-cr (crystal-playground-get-main-cr current-playground-dir))
-         (shard-yaml (crystal-playground-get-shard-yaml current-playground-dir)))
+         (shard-yml (crystal-playground-get-shard-yml current-playground-dir)))
     ;; open the main file
     (find-file main-cr)
     (crystal-playground-mode)
