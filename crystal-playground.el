@@ -2,11 +2,15 @@
 
 ;; Copyright (C) 2018  Jason Howell (jasonrobot)
 
-;; Author: 
-;; URL: 
+;; Author: Jason Howell
+;; URL: https://github.com/jasonrobot/crystal-playground
 ;; Version: 0.1
 ;; Keywords: tools, crystal
 ;; Package-Requires: ((emacs "24.3") (crystal-mode "0.1.2"))
+
+;; This file is NOT part of GNU Emacs.
+
+;;; License:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -23,7 +27,12 @@
 
 ;;; Commentary:
 
-;; It is port of github.com/grafov/rust-playground for Crystal language.
+;; This is port of github.com/grafov/rust-playground for Crystal
+;; language. You can spin up a temporary project to play around with
+;; some Crystal code. It uses 'crystal new app', so the playground can
+;; have external deps added in the shard.yml, and it has a git repo
+;; initialized, so it isn't too hard to copy a playground into a
+;; standalone app.
 
 ;;; Code:
 
@@ -70,7 +79,14 @@ puts \"Result: %s\" % Playground.main"
   :group 'crystal-playground)
 
 (defcustom crystal-playground-source-header-comment
-  ""
+  "snippet of code @ 2018-06-26 23:46:23
+
+=== Rust Playground ===
+This snippet is in: ~/.emacs.d/rust-playground/at-2018-06-26-234623/
+
+Execute the snippet: C-c C-c
+Delete the snippet completely: C-c k
+Toggle between main.rs and Cargo.toml: C-c b"
   "Header comment that goes in the source file with instructions."
   :type 'string
   :group 'crystal-playground)
@@ -112,6 +128,20 @@ Otherwise message the user that they aren't in one."
        (message "You aren't in a Crystal playground.")
      ,@forms))
 
+(defun crystal-playground-insert-template-head (basedir)
+  "Inserts a template about the snippet into the file."
+  (let ((starting-point (point)))
+    (insert (format
+             "Crystal Playground @ %s
+=== Crystal Playground ===
+This playground is in: %s
+Execute the playground: C-c C-c
+Delete the playground completely: C-c k
+"
+             (time-stamp-string "%:y-%02m-%02d %02H:%02M:%02S")
+             basedir))
+    (comment-region starting-point (point))))
+
 ;;TODO make basedir optional, default to a defcustom
 (defun crystal-playground-make-new (basedir)
   "Create a new crystal project in BASEDIR using the 'crystal' command."
@@ -152,6 +182,7 @@ Otherwise message the user that they aren't in one."
     ;; just making my own rather than modifying what exists
     (erase-buffer)
     ;; insert the template header
+    (insert (crystal-playground-insert-template-head current-playground-dir))
     (insert crystal-playground-source-header-comment)
     (insert crystal-playground-main-template)
     ;; put the point in a nice place
