@@ -78,18 +78,18 @@ puts \"Result: %s\" % Playground.main"
   :type 'string
   :group 'crystal-playground)
 
-(defcustom crystal-playground-source-header-comment
-  "snippet of code @ 2018-06-26 23:46:23
+;; (defcustom crystal-playground-source-header-comment
+;;   "snippet of code @ 2018-06-26 23:46:23
 
-=== Rust Playground ===
-This snippet is in: ~/.emacs.d/rust-playground/at-2018-06-26-234623/
+;; === Crystal Playground ===
+;; This snippet is in: %s
 
-Execute the snippet: C-c C-c
-Delete the snippet completely: C-c k
-Toggle between main.rs and Cargo.toml: C-c b"
-  "Header comment that goes in the source file with instructions."
-  :type 'string
-  :group 'crystal-playground)
+;; Execute the snippet: C-c C-c
+;; Delete the snippet completely: C-c k
+;; Toggle between main.rs and Cargo.toml: C-c b"
+;;   "Header comment that goes in the source file with instructions."
+;;   :type 'string
+;;   :group 'crystal-playground)
 
 (define-minor-mode crystal-playground-mode
   "A place to play with crystal!"
@@ -133,8 +133,11 @@ Otherwise message the user that they aren't in one."
   (let ((starting-point (point)))
     (insert (format
              "Crystal Playground @ %s
+
 === Crystal Playground ===
+
 This playground is in: %s
+
 Execute the playground: C-c C-c
 Delete the playground completely: C-c k
 "
@@ -182,8 +185,8 @@ Delete the playground completely: C-c k
     ;; just making my own rather than modifying what exists
     (erase-buffer)
     ;; insert the template header
-    (insert (crystal-playground-insert-template-head current-playground-dir))
-    (insert crystal-playground-source-header-comment)
+    (crystal-playground-insert-template-head current-playground-dir)
+    ;; (insert crystal-playground-source-header-comment)
     (insert crystal-playground-main-template)
     ;; put the point in a nice place
     (forward-line -4)
