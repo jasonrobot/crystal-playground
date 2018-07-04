@@ -17,8 +17,7 @@ The mirror repository of the project: **TODO**
 
 Example screen after creation of a new snippet:
 
-**TODO**
-<!-- ![screenshot](rust-playground-after-start.png) -->
+![screenshot](crystal-playground-after-startup.png)
 
 ## Usage
 
