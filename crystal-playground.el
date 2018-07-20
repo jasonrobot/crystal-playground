@@ -28,8 +28,8 @@
 ;;; Commentary:
 
 ;; This is port of github.com/grafov/rust-playground for Crystal
-;; language. You can spin up a temporary project to play around with
-;; some Crystal code. It uses 'crystal new app', so the playground can
+;; language.  You can spin up a temporary project to play around with
+;; some Crystal code.  It uses 'crystal new app', so the playground can
 ;; have external deps added in the shard.yml, and it has a git repo
 ;; initialized, so it isn't too hard to copy a playground into a
 ;; standalone app.
@@ -57,7 +57,7 @@
 
 (defcustom crystal-playground-confirm-deletion
   t
-  "Non-nil means you will be asked for confirmation on the snippet deletion with `crystal-playground-rm'.
+  "Non-nil means you will be asked for confirmation on deletion.
 
 By default confirmation required."
   :type 'boolean
@@ -74,7 +74,7 @@ module Playground
 end
 
 puts \"Result: %s\" % Playground.main"
-  "When creating a new playground, this will be used as the playground.cr file"
+  "When creating a new playground, this will be used as the playground.cr file."
   :type 'string
   :group 'crystal-playground)
 
@@ -104,7 +104,7 @@ puts \"Result: %s\" % Playground.main"
 (defun crystal-playground-get-current-basedir (&optional path)
   "Get the path of the dir containing this playground.
 
-Start from PATH or the path of the current buffer's file.  Returns 
+Start from PATH or the path of the current buffer's file.  Returns
 the path to the basedir or NIL if this is not a snippet."
   (unless path
     (setq path (buffer-file-name)))
@@ -129,7 +129,7 @@ Otherwise message the user that they aren't in one."
      ,@forms))
 
 (defun crystal-playground-insert-template-head (basedir)
-  "Inserts a template about the snippet into the file."
+  "Insert a template about the snippet in BASEDIR into the current buffer."
   (let ((starting-point (point)))
     (insert (format
              "Crystal Playground @ %s
