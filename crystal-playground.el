@@ -38,6 +38,7 @@
 
 (require 'compile)
 (require 'time-stamp)
+(require 'crystal-mode)
 
 (defgroup crystal-playground nil
   "Options for crystal-playground."
