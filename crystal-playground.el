@@ -65,12 +65,10 @@ By default confirmation required."
   :group 'crystal-playground)
 
 (defcustom crystal-playground-main-template
-  "require \"./playground/*\"
-
-module Playground
+  "module Playground
   def self.main
     # TODO: Put your code here
-    
+
   end
 end
 
@@ -85,9 +83,8 @@ puts \"Result: %s\" % Playground.main"
 ;; === Crystal Playground ===
 ;; This snippet is in: %s
 
-;; Execute the snippet: C-c C-c
-;; Delete the snippet completely: C-c k
-;; Toggle between main.rs and Cargo.toml: C-c b"
+;; Execute the snippet: C-x p r
+;; Delete the snippet completely: C-x p k
 ;;   "Header comment that goes in the source file with instructions."
 ;;   :type 'string
 ;;   :group 'crystal-playground)
@@ -97,9 +94,8 @@ puts \"Result: %s\" % Playground.main"
   :init-value nil
   :lighter "Play(Crystal)"
   :keymap (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "C-c C-c") 'crystal-playground-exec)
-            (define-key map (kbd "C-c k") 'crystal-playground-rm)
-            ;;TODO add a key for switch to shard.yml
+            (define-key map (kbd "C-x p r") 'crystal-playground-exec)
+            (define-key map (kbd "C-x p k") 'crystal-playground-rm)
             map))
 
 (defun crystal-playground-get-current-basedir (&optional path)
@@ -110,19 +106,18 @@ the path to the basedir or NIL if this is not a snippet."
   (unless path
     (setq path (buffer-file-name)))
   ;; need this check incase buffer isn't visiting a file
-  (if (not path)
-      nil
+  (when path
     ;; descend recursively
-    (if (not (string= path "/"))
-        (let ((base (expand-file-name crystal-playground-basedir))
-              (path-parent (file-name-directory (directory-file-name path))))
-          (if (string= (file-name-as-directory base)
-                       (file-name-as-directory path-parent))
-              path
-            (crystal-playground-get-current-basedir path-parent)))
-      nil)))
+    (unless (string= path "/")
+      (let ((base (expand-file-name crystal-playground-basedir))
+            (path-parent (file-name-directory (directory-file-name path))))
+        (if (string= (file-name-as-directory base)
+                     (file-name-as-directory path-parent))
+            path
+          (crystal-playground-get-current-basedir path-parent)))
+      )))
 
-(defmacro in-crystal-playground (&rest forms)
+(defmacro crystal-playground-in-playground (&rest forms)
   "Execute FORMS if current buffer is part of a playground.
 Otherwise message the user that they aren't in one."
   `(if (not (crystal-playground-get-current-basedir))
@@ -139,8 +134,8 @@ Otherwise message the user that they aren't in one."
 
 This playground is in: %s
 
-Execute the playground: C-c C-c
-Delete the playground completely: C-c k
+Execute the playground: C-c p r
+Delete the playground completely: C-x p k
 "
              (time-stamp-string "%:y-%02m-%02d %02H:%02M:%02S")
              basedir))
@@ -196,7 +191,7 @@ Delete the playground completely: C-c k
 (defun crystal-playground-exec ()
   "Run the code of the playground."
   (interactive)
-  (in-crystal-playground
+  (crystal-playground-in-playground
    (save-buffer t)
    (compile crystal-playground-run-command)))
 
@@ -206,14 +201,14 @@ Delete the playground completely: C-c k
     (remove 'nil
             (mapcar 'find-buffer-visiting
                     (append
-                     (directory-files-recursively basedir "\.cr$")
-                     (directory-files-recursively basedir "\.yml$"))))))
+                     (directory-files-recursively basedir ".cr\\'")
+                     (directory-files-recursively basedir ".yml\\'"))))))
 
 ;;;###autoload
 (defun crystal-playground-rm ()
   "Remove files of the current snippet together with directory of this snippet."
   (interactive)
-  (in-crystal-playground
+  (crystal-playground-in-playground
    (let ((current-basedir (crystal-playground-get-current-basedir)))
      (if current-basedir
          (when (or (not crystal-playground-confirm-deletion)
