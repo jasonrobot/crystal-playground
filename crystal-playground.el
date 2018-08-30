@@ -6,7 +6,7 @@
 ;; URL: https://github.com/jasonrobot/crystal-playground
 ;; Version: 0.1
 ;; Keywords: tools, crystal
-;; Package-Requires: ((emacs "24.3") (crystal-mode "0.1.2"))
+;; Package-Requires: ((emacs "25") (crystal-mode "0.1.2"))
 
 ;; This file is NOT part of GNU Emacs.
 
