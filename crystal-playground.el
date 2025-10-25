@@ -134,7 +134,7 @@ Otherwise message the user that they aren't in one."
 
 This playground is in: %s
 
-Execute the playground: C-c p r
+Execute the playground: C-x p r
 Delete the playground completely: C-x p k
 "
              (time-stamp-string "%:y-%02m-%02d %02H:%02M:%02S")
